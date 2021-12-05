@@ -41,11 +41,11 @@ function login(nome ,senha) {
             logado(nome,senha)
             window.location.href = "recados.html"
         }else{
-            console.log('senha errada')
+            alert('senha errada')
         }
 
     }else{
-        console.log('usuario n existe')
+       alert('usuario n existe')
     }
 }
 
