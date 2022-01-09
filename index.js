@@ -66,15 +66,15 @@ btnCriarUser.addEventListener('click',function(event){
     const modalNome = document.querySelector('#recipient-name')
     const modalPass = document.querySelector('#recipient-pass')
 
-    axios.post('https://backend-avf-kaian.herokuapp.com/user',{
+    axios.post('https://back-end-avf-kaian.herokuapp.com/user',{
             name: modalNome.value,
             pass: modalPass.value
         
     })
     .then(function (response) {
         
-      console.log(response.data.id);
-      createUser(modalNome.value, modalPass.value,response.data.id)
+      console.log(response.data);
+      createUser(modalNome.value, modalPass.value,response.data.uid)
     })
     .catch(function (error) {
       console.log(error);

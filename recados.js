@@ -23,14 +23,15 @@ btnCriarMensagem.addEventListener('click',function(event){
 
 function addMensagem(id,desc,det) {
   
-    axios.post(`https://backend-af-kaian.herokuapp.com/users/${id}/messages`,{
+    axios.post(`https://back-end-avf-kaian.herokuapp.com/messages`,{
         title: desc,
-        description: det 
+        description: det,
+        user_uid: id
         
     })
     .then(function (response) {
         
-        console.log(response.data.id);
+        console.log(response.data.uid);
         window.location.href = "recados.html"
       })
       .catch(function (error) {
@@ -45,22 +46,23 @@ function addMensagem(id,desc,det) {
 function mostrarTabela(id) {
     const table = document.querySelector('#corpo')
     
-    axios.get(`https://backend-af-kaian.herokuapp.com/users/${id}/messages`,{
+    axios.get(`https://back-end-avf-kaian.herokuapp.com/messagesUser/${id}`,{
             
     })
     .then(function (response) {
-    
+        
+        console.log(response.data)
 
     table.innerHTML = ""
 
-    for (let i = 0; i < response.data.length; i++) {
+    for (let i = 0; i < response.data[0].messages.length; i++) {
         table.innerHTML += 
 
         `<tr>` +
               `<th id="linha" scope="row">${i}</th>`+
-              `<td>${response.data[i].title}</td>`+
-              `<td>${response.data[i].description}</td>`+
-              `<td> <button onclick="myFunction2(${response.data[i].id})" id="edit" type="button" class=" btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" >Editar</button> <button onclick="myFunction(${response.data[i].id})" type="button" class="deletar btn btn-danger btn-sm">Deletar</button> </td>`+
+              `<td>${response.data[0].messages[i].title}</td>`+
+              `<td>${response.data[0].messages[i].description}</td>`+
+              `<td> <button onclick="myFunction2(${response.data[0].messages[i].uid})" id="edit" type="button" class=" btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" >Editar</button> <button onclick="myFunction(${response.data[0].messages[i].uid})" type="button" class="deletar btn btn-danger btn-sm">Deletar</button> </td>`+
         '</tr>'
         
     }
@@ -116,19 +118,21 @@ function editarItem(user,pos) {
 
     
 
-    axios.get(`https://backend-af-kaian.herokuapp.com/users/${user}/messages/${pos}`,{
+    axios.get(`https://back-end-avf-kaian.herokuapp.com/messages/${pos}`,{
             
     })
     .then(function (response) {
-    console.log(response)
+    console.log(response.data)
+
     desc.value = response.data.title
     det.value = response.data.description
 
     btnSalvar.addEventListener('click',function(event){
 
-        axios.put(`https://backend-af-kaian.herokuapp.com/users/${user}/messages/${pos}`,{
+        axios.put(`https://back-end-avf-kaian.herokuapp.com/messages/${pos}`,{
             title: desc.value,
-	        description: det.value
+	        description: det.value,
+            user_uid: user
     })
     .then(function (response) {
         console.log(response)
@@ -154,7 +158,7 @@ function editarItem(user,pos) {
 }
 
 function myFunction2(posicao) {
-    
+    console.log(posicao)
     editarItem(infoLogado.id,posicao)
 
 }
