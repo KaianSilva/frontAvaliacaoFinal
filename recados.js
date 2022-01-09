@@ -1,5 +1,8 @@
 const logado = JSON.parse(localStorage.getItem('logado'))
 console.log(logado)
+if (logado == null) {
+    window.location.href = "index.html"
+}
 console.log(`usuario logado: ${logado.nome}`)
 console.log(localStorage.getItem(logado.nome))
 
@@ -57,12 +60,11 @@ function mostrarTabela(id) {
 
     for (let i = 0; i < response.data[0].messages.length; i++) {
         table.innerHTML += 
-
         `<tr>` +
               `<th id="linha" scope="row">${i}</th>`+
               `<td>${response.data[0].messages[i].title}</td>`+
               `<td>${response.data[0].messages[i].description}</td>`+
-              `<td> <button onclick="myFunction2(${response.data[0].messages[i].uid})" id="edit" type="button" class=" btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" >Editar</button> <button onclick="myFunction(${response.data[0].messages[i].uid})" type="button" class="deletar btn btn-danger btn-sm">Deletar</button> </td>`+
+              `<td> <button onclick="myFunction2('${response.data[0].messages[i].uid}')" id="edit" type="button" class=" btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" >Editar</button> <button onclick="myFunction('${response.data[0].messages[i].uid}')" type="button" class="deletar btn btn-danger btn-sm">Deletar</button> </td>`+
         '</tr>'
         
     }
@@ -81,9 +83,9 @@ mostrarTabela(infoLogado.id)
 
 
 /* EXCLUIR  MENSAGEM */
-function removerItem(user,pos) {
+function removerItem(uid) {
     
-    axios.delete(`https://backend-af-kaian.herokuapp.com/users/${user}/messages/${pos}`,{
+    axios.delete(`https://back-end-avf-kaian.herokuapp.com/messages/${uid}`,{
             
     })
     .then(function (response) {
@@ -100,7 +102,7 @@ function removerItem(user,pos) {
 
 function myFunction(posicao) {
     
-    removerItem(infoLogado.id,posicao)
+    removerItem(posicao)
 
 }
 
@@ -158,7 +160,8 @@ function editarItem(user,pos) {
 }
 
 function myFunction2(posicao) {
-    console.log(posicao)
+    
+    
     editarItem(infoLogado.id,posicao)
 
 }
