@@ -49,6 +49,7 @@ function login(nome ,senha) {
       
     })
     .catch(function (error) {
+        alert("usuario ou senha incorretos !")
       console.log(error);
     });
 }
