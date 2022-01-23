@@ -4,11 +4,6 @@ if (logado == null) {
     window.location.href = "index.html"
 }
 console.log(`usuario logado: ${logado.nome}`)
-console.log(localStorage.getItem(logado.nome))
-
-const infoLogado = JSON.parse(localStorage.getItem(logado.nome))
-console.log(infoLogado.id)
-
 
 const h1 = document.querySelector('.h1')
 h1.innerHTML = `Bem vindo <span class="text-success">${logado.nome.toUpperCase()}</span>`
@@ -20,16 +15,16 @@ btnCriarMensagem.addEventListener('click',function(event){
     const detalhamento = document.querySelector('#det')
 
     
-    addMensagem(infoLogado.id,descricao.value, detalhamento.value)
+    addMensagem(logado.id,descricao.value, detalhamento.value)
 
 })
 
 function addMensagem(id,desc,det) {
   
-    axios.post(`https://back-end-avf-kaian.herokuapp.com/messages`,{
+    axios.post(`https://back-end-avf-kaian.herokuapp.com/message`,{
         title: desc,
         description: det,
-        user_uid: id
+        user: id
         
     })
     .then(function (response) {
@@ -49,7 +44,7 @@ function addMensagem(id,desc,det) {
 function mostrarTabela(id) {
     const table = document.querySelector('#corpo')
     
-    axios.get(`https://back-end-avf-kaian.herokuapp.com/messagesUser/${id}`,{
+    axios.get(`https://back-end-avf-kaian.herokuapp.com/message/user/${id}`,{
             
     })
     .then(function (response) {
@@ -58,13 +53,13 @@ function mostrarTabela(id) {
 
     table.innerHTML = ""
 
-    for (let i = 0; i < response.data[0].messages.length; i++) {
+    for (let i = 0; i < response.data.length; i++) {
         table.innerHTML += 
         `<tr>` +
               `<th id="linha" scope="row">${i}</th>`+
-              `<td>${response.data[0].messages[i].title}</td>`+
-              `<td>${response.data[0].messages[i].description}</td>`+
-              `<td> <button onclick="myFunction2('${response.data[0].messages[i].uid}')" id="edit" type="button" class=" btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" >Editar</button> <button onclick="myFunction('${response.data[0].messages[i].uid}')" type="button" class="deletar btn btn-danger btn-sm">Deletar</button> </td>`+
+              `<td>${response.data[i].title}</td>`+
+              `<td>${response.data[i].description}</td>`+
+              `<td> <button onclick="editarItem('${response.data[i].uid}')" id="edit" type="button" class=" btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal" >Editar</button> <button onclick="removerItem('${response.data[i].uid}')" type="button" class="deletar btn btn-danger btn-sm">Deletar</button> </td>`+
         '</tr>'
         
     }
@@ -78,14 +73,14 @@ function mostrarTabela(id) {
 
 }
 
-mostrarTabela(infoLogado.id)
+mostrarTabela(logado.id)
 
 
 
 /* EXCLUIR  MENSAGEM */
 function removerItem(uid) {
     
-    axios.delete(`https://back-end-avf-kaian.herokuapp.com/messages/${uid}`,{
+    axios.delete(`https://back-end-avf-kaian.herokuapp.com/message/${uid}`,{
             
     })
     .then(function (response) {
@@ -100,18 +95,12 @@ function removerItem(uid) {
 
 }
 
-function myFunction(posicao) {
-    
-    removerItem(posicao)
-
-}
 
 
 /* EDITAR  MENSAGEM */
 
-function editarItem(user,pos) {
-    /* userLogado =  JSON.parse(localStorage.getItem(user))
-    console.log(userLogado.mensagens[pos]) */
+function editarItem(uid) {
+    
     console.log('vai editar')
 
     let desc = document.querySelector('#recipient-desc')
@@ -120,7 +109,7 @@ function editarItem(user,pos) {
 
     
 
-    axios.get(`https://back-end-avf-kaian.herokuapp.com/messages/${pos}`,{
+    axios.get(`https://back-end-avf-kaian.herokuapp.com/message/${uid}`,{
             
     })
     .then(function (response) {
@@ -131,10 +120,10 @@ function editarItem(user,pos) {
 
     btnSalvar.addEventListener('click',function(event){
 
-        axios.put(`https://back-end-avf-kaian.herokuapp.com/messages/${pos}`,{
+        axios.put(`https://back-end-avf-kaian.herokuapp.com/message/${uid}`,{
             title: desc.value,
-	        description: det.value,
-            user_uid: user
+	        description: det.value
+           
     })
     .then(function (response) {
         console.log(response)
@@ -154,20 +143,10 @@ function editarItem(user,pos) {
 
 
     
-
-    
-    
-}
-
-function myFunction2(posicao) {
-    
-    
-    editarItem(infoLogado.id,posicao)
-
 }
 
 /* SAIR DO SISTEMA */
-function myFunction3() {
+function logout() {
     
     localStorage.removeItem('logado')
 

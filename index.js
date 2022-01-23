@@ -1,17 +1,19 @@
+const usrlogado = JSON.parse(localStorage.getItem('logado'))
+console.log(usrlogado)
+if (usrlogado) {
+    window.location.href = "recados.html"
+}
+
 function Usuario(senha,id) {
     this.senha = senha
     this.id = id
     this.mensagens = new Array()
 }
 
-/* function Mensagens(descricao,detalhes) {
-    this.descricao = descricao
-    this.detalhes = detalhes
-} */
 
-function Logado(nome,senha){
+function Logado(nome,id){
     this.nome = nome
-    this.senha = senha
+    this.id = id
 }
 
 function createUser(nome,senha,id) {
@@ -32,21 +34,23 @@ function createUser(nome,senha,id) {
 
 function login(nome ,senha) {
     console.log(nome)
-    const user = JSON.parse(localStorage.getItem(nome))
-
-    if (user) {
-        if (user.senha == senha) {
-            console.log('usuario logado')
-            
-            logado(nome,senha)
-            window.location.href = "recados.html"
-        }else{
-            alert('senha errada')
-        }
-
-    }else{
-       alert('usuario n existe')
-    }
+    
+    axios.post('https://back-end-avf-kaian.herokuapp.com/signin',{
+            name: nome,
+            pass: senha
+        
+    })
+    .then(function (response) {
+        
+      console.log(response.data);
+      const usuarioLogado = new Logado(response.data.name,response.data.uid)
+      localStorage.setItem('logado',JSON.stringify(usuarioLogado))
+      window.location.href = "recados.html"
+      
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 
 const usuario = document.querySelector('#nome')
@@ -66,7 +70,7 @@ btnCriarUser.addEventListener('click',function(event){
     const modalNome = document.querySelector('#recipient-name')
     const modalPass = document.querySelector('#recipient-pass')
 
-    axios.post('https://back-end-avf-kaian.herokuapp.com/user',{
+    axios.post('https://back-end-avf-kaian.herokuapp.com/signup',{
             name: modalNome.value,
             pass: modalPass.value
         
@@ -74,7 +78,8 @@ btnCriarUser.addEventListener('click',function(event){
     .then(function (response) {
         
       console.log(response.data);
-      createUser(modalNome.value, modalPass.value,response.data.uid)
+      alert('criado')
+      
     })
     .catch(function (error) {
       console.log(error);
@@ -84,9 +89,9 @@ btnCriarUser.addEventListener('click',function(event){
 
 })
 
-function logado(usuario,senha) {
+function logado(usuario,id) {
     
-    const usuarioLogado = new Logado(usuario,senha)
+    const usuarioLogado = new Logado(usuario,id)
     console.log(usuarioLogado)
     localStorage.setItem('logado',JSON.stringify(usuarioLogado))
 
